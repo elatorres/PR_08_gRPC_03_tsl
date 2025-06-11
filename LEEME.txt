@@ -1,0 +1,104 @@
+Instructivo para gRPC con encriptación TSL
+
+Vamos a simular una autenticación con usuario y password usando encriptación en la comunicación.
+
+=============================================
+
+Crear nuestra solución con dos proyectos
+PR_08_gRPC_03_tsl/
+
+├── Server/
+│   ├── Protos/
+│   │   └── auth.proto
+│   ├── Program.cs
+│   └── AuthServiceImpl.cs
+├── Client/
+│   ├── Protos/
+│   │   └── auth.proto
+│   └── Program.cs
+├── server.crt	// Estos los vamos a crear después.
+├── server.key
+
+=============================================
+
+Nuestro .proto es el siguiente:
+
+syntax = "proto3";
+
+option csharp_namespace = "GrpcSecureAuth";
+
+service AuthService {
+  rpc Authenticate (AuthRequest) returns (AuthResponse);
+  rpc GetProfile (ProfileRequest) returns (ProfileResponse);
+}
+
+message AuthRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string token = 1;
+  string message = 2;
+}
+
+message ProfileRequest {
+  string token = 1;
+}
+
+message ProfileResponse {
+  string name = 1;
+  int32 age = 2;
+  string email = 3;
+}
+
+=============================================
+
+Generamos un certificado auto firmado usando los utilitarios de openssl https://www.openssl.org/
+https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl
+openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -days 365 -subj "/CN=localhost"
+Esto genera un certificado válido por un año.
+Allí es importante la declaración del CN que debe coincidir con la url que se usa para conectarse. Si fuera diferente, debe usarse esa. Por ejemplo: 192.168.1.25 o mi_servidor_grpc.
+Este procedimiento genera dos archivos: server.key  (Clave privada, no se comparte el servidor debe acceder) y server.crt (certificado, entregado a los clientes)
+Luego los debemos copiar a los directorios donde están los ejecutables.
+Para verificar el certificado podemos hacer:
+openssl x509 -in server.crt -text -noout
+
+Para hacer que el host (la máquina física) confíe en el certificado auto firmado, suponiendo es un linux de la familia Debian/Ubuntu, podemos ejecutar:
+sudo cp server.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+
+=============================================
+
+Escribimos nuestros códigos como los entregados con este documento.
+Server/Program.cs
+Server/AuthServiceImpl.cs
+Client/Program.cs
+Para nuestro caso el .proto es el mismo para ambos proyectos. Pero igual los dejamos en dos directorios para cada proyecto. En otros casos podrían tener pequeñas diferencias por ejemplo cuando el namespace del servidor y del cliente son diferentes.
+
+=============================================
+
+Las bibliotecas que necesitamos son las siguientes:
+dotnet add package Grpc.Net.Client
+dotnet add package Grpc.Tools
+dotnet add package Google.Protobuf
+dotnet add package Grpc.Core
+
+Estas no son las últimas. Pero las usamos por compatibilidad y simplicidad del ejemplo.
+
+=============================================
+Verificar que en Server.csproj y en Client.csproj está la referencia a Protos/auth.proto o similar.
+Por ejemplo:
+    <ItemGroup>
+        <Protobuf Include="Protos/auth.proto" GrpcServices="Client" />
+    </ItemGroup>
+
+
+
+
+
+
+
+
+
+
