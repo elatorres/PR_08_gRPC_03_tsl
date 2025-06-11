@@ -116,5 +116,7 @@ Verify that in Server.csproj and Client.csproj is the reference to Protos/auth.p
     </ItemGroup>
 ```
 
+To run this example we need to place the private key and the certificate in the directory of the executable Server. And the certificate on the directory of the executable Client.
+
 If everything is OK then building and running the Server first and then the client woukd show the demonstration.
 Regards.
