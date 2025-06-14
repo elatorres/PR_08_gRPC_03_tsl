@@ -26,6 +26,8 @@ public class AuthServiceImpl : AuthService.AuthServiceBase
         }
         // return generic task with empty token and invalid message
         return Task.FromResult(new AuthResponse { Token = "", Message = "Invalid credentials." });
+        // another option is to raise an exception that is transfer it to the client.
+        // throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid token."));
     }
 
     // Remote Function GetProfile

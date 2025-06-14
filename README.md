@@ -17,7 +17,7 @@ PR_08_gRPC_03_tsl/
 │   ├── Protos/
 │   │   └── auth.proto
 │   └── Program.cs
-├── server.crt	// Estos los vamos a crear después.
+├── server.crt	// These will be created later
 └── server.key
 ```
 
