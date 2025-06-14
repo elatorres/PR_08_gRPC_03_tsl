@@ -108,7 +108,7 @@ dotnet add package Grpc.Core
 These are not the last ones. But we use them for compatibility and simplicity of the example.
 
 =============================================
-Verify that in Server.csproj and Client.csproj is the reference to Protos/auth.proto or similar.Por ejemplo:
+Verify that in Server.csproj and Client.csproj is the reference to Protos/auth.proto or similar. For example:
 
 ```
     <ItemGroup>
@@ -118,6 +118,6 @@ Verify that in Server.csproj and Client.csproj is the reference to Protos/auth.p
 
 To run this example we need to place the private key and the certificate in the directory of the executable Server. And the certificate on the directory of the executable Client.
 
-If everything is OK then building and running the Server first and then the client woukd show the demonstration.
+If everything is OK then building and running the Server first and then the client would show the demonstration.
 
 Regards.
